@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Project_1.Game;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,12 +13,19 @@ namespace Project_1
 {
     public partial class Main : Form
     {
-        Object[,] map = new object[8,8];
+        //TODO: Map Values for Pawns
+        Point[] outerRingMap = new Point[] { };
         public Main()
         {
+            gameMap = new Map();
+            this.Controls.Add(this.gameMap.panel);
             InitializeComponent();
-        }
+            
+            
 
-      
+        }
+        private Map gameMap;
+
+   
     }
 }

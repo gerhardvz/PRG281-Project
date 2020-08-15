@@ -20,7 +20,7 @@ namespace Project_1
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            form = new PlayserSelect();
+            form = new Main();
             form.Show();
             Application.Run();
             
