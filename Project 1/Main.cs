@@ -12,10 +12,12 @@ namespace Project_1
 {
     public partial class Main : Form
     {
-        Object[,] map = new object[8,8];
+        //TODO: Map Values for Pawns
+        Point[] outerRingMap = new Point[] { };
         public Main()
         {
             InitializeComponent();
+            
         }
 
       
