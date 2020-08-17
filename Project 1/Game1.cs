@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
+
 namespace Project_1.Game
 {
     class Game1
     {
+
         Control.ControlCollection controls;
         Map gameMap;
         private int pawnsPerBase;
@@ -31,6 +35,7 @@ namespace Project_1.Game
 
     class Base
     {
+
         public List<Pawn> pawns = new List<Pawn>();
         //Position where Base Start is located
         public Point baseStart;
@@ -124,5 +129,20 @@ namespace Project_1.Game
        
        
 
+
+        //Position where Base Start is located
+        Point baseStart;
+        //Position where Base End is located
+        Point baseEnd;
+        //Position where Base Start joins on outer loop
+        Point OuterJoinStart;
+        //Position where Base End joins on outer loop
+        Point OutterJoinEnd;
+
     }
+    //Please note this is not a typing error it is Pawn not PORN!!! 
+    //Please!!!
+     
+
+   
 }
