@@ -8,6 +8,7 @@ namespace Project_1
 {
     static class Program
     {
+       
         //is Multiplayer Game or not
         public static bool isMultiplayer;
         public static Form form;
@@ -20,7 +21,7 @@ namespace Project_1
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            form = new Main();
+            form = new PlayserSelect();
             form.Show();
             Application.Run();
             

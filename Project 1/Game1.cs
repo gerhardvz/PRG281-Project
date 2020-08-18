@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,108 +13,77 @@ using System.Windows.Forms;
 
 namespace Project_1.Game
 {
-    class Game1
+    public delegate void MovePawnHandler(int steps);
+    enum eBase { Red =1,Green=2,Yellow=3,Blue=4 };
+    
+    class Game1:Panel
     {
 
-        Control.ControlCollection controls;
+        
         Map gameMap;
-        private int pawnsPerBase;
-        public List<Pawn> pawns = new List<Pawn>();
-        Game1(Control.ControlCollection controls)
+        //List of players - max 4 because of 4 bases
+       static List<Player> players = new List<Player>();
+      
+        //Dice
+      public  Game1()
         {
-            this.controls = controls;
+           
+
+            this.SuspendLayout();
+
+            this.Location = new Point(50, 291);
+            this.Name = "Game Board";
+            this.Size = new System.Drawing.Size(650, 650);
+            this.TabIndex = 0;
+
+
             gameMap = new Map();
-
-            foreach(User user in Program.users)
+            foreach (User user in Program.users)
             {
-                Base userBase = new Base();
-                
+                Player player = new Player(user.Username);
+                players.Add(player);
             }
+            Controls.Add(gameMap);
         }
+       
 
-    }
-
-    class Base
-    {
-
-        public List<Pawn> pawns = new List<Pawn>();
-        //Position where Base Start is located
-        public Point baseStart;
-        //Position where Base End is located
-        public Point baseEnd;
-        //Position where Base Start joins on outer loop
-        public Point OuterJoinStart;
-        //Position where Base End joins on outer loop
-        public Point OutterJoinEnd;
-
-      public  Base()
+        public static bool eBaseAvailable(eBase playerbase)
         {
+            foreach(Player p in players)
+            {
+                if(p.baseColor == playerbase)
+                {
+                    return false;
+                }
+            }
+            return true;
 
         }
 
     }
-    //Please note this is not a typing error it is Pawn not PORN!!! 
-    //Please do not rename!!!
-    class Pawn:PictureBox {
-        //TODO: Implement Set:
-        //If Position Reference is >32 {-32} to get possition.
-
-       public Pawn(Base pawnBase){
-            this.steps = 0;
-            this.Location = pawnBase.baseStart;
-            
-            
-}
-        Point Position { get; set; }
-        int steps;
-        
-        
-
-    }
-
-    class Map 
+    class Map:PictureBox
     {
         public Panel panel;
-        private PictureBox imgMap;
-       
-       public Map() 
-        {
-            this.panel = new Panel();
-            this.imgMap = new PictureBox();
-            this.panel.SuspendLayout();
-            
-            ((System.ComponentModel.ISupportInitialize)(this.imgMap)).BeginInit();
+        public Base bases;
 
+        public Map()
+        {
             
-            this.panel.Controls.Add(this.imgMap);
-          
-            this.panel.Location = new Point(50, 291);
-            this.panel.Name = "Game Board";
-            this.panel.Size = new System.Drawing.Size(650, 650);
-            this.panel.TabIndex = 0;
 
             // 
             // picMap
             // 
-            this.imgMap.Image = Properties.Resources.Map;
-            this.imgMap.Location = new Point(21, 30);
-            this.imgMap.Name = "Map";
-            this.imgMap.Size = new Size(602, 514);
-            this.imgMap.SizeMode = PictureBoxSizeMode.Zoom;
-            this.imgMap.TabIndex =8;
-            this.imgMap.TabStop = false;
-
-            //
-            //Main
-            //
-            
-            ((System.ComponentModel.ISupportInitialize)(this.imgMap)).EndInit();
-
-            this.panel.ResumeLayout(false);
+            this.Image = Properties.Resources.Map;
+            this.Location = new Point(21, 30);
+            this.Name = "Map";
+            this.Size = new Size(602, 514);
+            this.SizeMode = PictureBoxSizeMode.Zoom;
+            this.TabIndex = 8;
+            this.TabStop = false;
         }
 
-    //TODO: Map Values for Pawns
-    Point[] outerRingMap = new Point[] {
+        //TODO: Map Values for Pawns
+        public static Point[] outerRingMap = new Point[] {
             new Point(309, 40),
             new Point(356, 41),
             new Point(394, 52),
@@ -125,23 +95,246 @@ namespace Project_1.Game
             new Point(309, 40),
             new Point(309, 40)
         };
+    }
 
-       
-       
 
+    abstract class Base
+    {
+        public  event MovePawnHandler MovePawn;
+        
+        public List<Pawn> pawns = new List<Pawn>();
+        protected const int MAXPAWNS = 3;
+        public eBase baseColor;
 
         //Position where Base Start is located
-        Point baseStart;
+        public Point[] BeginWaypoint;
         //Position where Base End is located
-        Point baseEnd;
-        //Position where Base Start joins on outer loop
-        Point OuterJoinStart;
-        //Position where Base End joins on outer loop
-        Point OutterJoinEnd;
+        public Point[] EndWaypoint ;
+      
+        public  void move(int step) {
+            MovePawn?.Invoke(step);
+        }
 
+        public Base()
+        {
+      //      Pawn pawn;
+     //       for (int i = 0; i < MAXPAWNS; i++)
+       //     {
+       //         pawn = new Pawn(this.BeginWaypoint[0],this.baseColor);
+       //         pawns.Add(pawn);
+        //    }
+           // MovePawn = new MovePawnHandler(pawns[0].move);
+        }
+
+        //if pawn reaches end link move to next pawn
     }
+
+    //Copy for other 3 bases
+    class BlueBase : Base
+    {
+        public BlueBase()
+        {
+            MessageBox.Show("Created a Blue Base");
+            //Add values
+            baseColor = eBase.Blue;
+            BeginWaypoint = new Point[] {
+                new Point(0,0),
+                new Point(0,0),
+                new Point(0,0),
+                new Point(0,0)
+            };
+            EndWaypoint = new Point[] {
+                new Point(0,0),
+                new Point(0,0),
+                new Point(0,0),
+                new Point(0,0)
+            };
+            Pawn pawn;
+            for (int i = 0; i < MAXPAWNS; i++)
+            {
+                pawn = new Pawn(this.BeginWaypoint[0], this.baseColor);
+                pawns.Add(pawn);
+            }
+         //   MovePawn = new MovePawnHandler(pawns[0].move);
+
+        }
+    }
+    class YellowBase : Base
+    {
+        public YellowBase()  
+        {
+            MessageBox.Show("Created a Yellow Base");
+            //Add values
+            baseColor = eBase.Yellow;
+            BeginWaypoint = new Point[] {
+                new Point(0,0),
+                new Point(0,0),
+                new Point(0,0),
+                new Point(0,0)
+            };
+            EndWaypoint = new Point[] {
+                new Point(0,0),
+                new Point(0,0),
+                new Point(0,0),
+                new Point(0,0)
+            };
+            Pawn pawn;
+            for (int i = 0; i < MAXPAWNS; i++)
+            {
+                pawn = new Pawn(this.BeginWaypoint[0], this.baseColor);
+                pawns.Add(pawn);
+            }
+
+        }
+    }
+    class GreenBase : Base
+    {
+        public GreenBase()
+        {
+            MessageBox.Show("Created a Green Base");
+            //Add values
+            baseColor = eBase.Green;
+            BeginWaypoint = new Point[] {
+                new Point(0,0),
+                new Point(0,0),
+                new Point(0,0),
+                new Point(0,0)
+            };
+            EndWaypoint = new Point[] {
+                new Point(0,0),
+                new Point(0,0),
+                new Point(0,0),
+                new Point(0,0)
+            };
+            Pawn pawn;
+            for (int i = 0; i < MAXPAWNS; i++)
+            {
+                pawn = new Pawn(this.BeginWaypoint[0], this.baseColor);
+                pawns.Add(pawn);
+            }
+
+        }
+    }
+    class RedBase : Base
+    {
+        public RedBase() 
+        {
+            MessageBox.Show("Created a Red Base");
+            //Add values
+            baseColor = eBase.Red;
+            BeginWaypoint = new Point[] {
+                new Point(0,0),
+                new Point(0,0),
+                new Point(0,0),
+                new Point(0,0)
+            };
+            EndWaypoint = new Point[] {
+                new Point(0,0),
+                new Point(0,0),
+                new Point(0,0),
+                new Point(0,0)
+            };
+
+            Pawn pawn;
+            for (int i = 0; i < MAXPAWNS; i++)
+            {
+                pawn = new Pawn(this.BeginWaypoint[0], this.baseColor);
+                pawns.Add(pawn);
+            }
+        }
+    }
+
     //Please note this is not a typing error it is Pawn not PORN!!! 
-    //Please!!!
+    //Please do not rename!!!
+    class Pawn:PictureBox {
+        eBase color;
+        
+
+       public Pawn(Point position,eBase color)
+        {
+            this.steps = 0;
+            this.Location = position;
+            this.color = color;
+        }
+        int Position {
+            get { return Position; }
+            set {
+                Position = value;
+                this.Location = Map.outerRingMap[Position];
+            } }
+        int steps;
+
+        public  void move(int step)
+        {
+            if (Position + step > 32)
+            {
+                Position = Position + step - 32;
+                return;
+            }
+            Position = Position + step;
+        }
+    }
+
+    class Player
+    {
+       public String username;
+        public eBase baseColor;
+        public Base playerBase;
+
+        public Player(String username)
+        {
+            this.username = username;
+            //setting player to random base
+            Random random = new Random();
+            for (; true;)
+            {
+                eBase tempPlayerbase = (eBase)random.Next(4);
+                if (Game1.eBaseAvailable(tempPlayerbase))
+                {
+                    baseColor = tempPlayerbase;
+                    break;
+                }
+            }
+            {
+                string sBaseColor = Enum.GetName(typeof(eBase), baseColor);
+                MessageBox.Show(typeof(BlueBase).ToString());
+               
+
+                Assembly assem = typeof(Base).Assembly;
+                playerBase = (Base)assem.CreateInstance("Project_1.Game." + sBaseColor + "Base");
+                
+            }
+
+        }
+       // public Player(String username, eBase baseColor) : base(username)
+      //  {
+      //      this.baseColor = baseColor;
+      //  }
+
+        public Player()
+        {
+            //setting player to random base
+            Random random = new Random();
+            for (; true;)
+            {
+                eBase tempPlayerbase = (eBase)random.Next(3)+1;
+                if (Game1.eBaseAvailable(tempPlayerbase)) {
+                    baseColor = tempPlayerbase;
+                    break;
+                }
+            }
+            { 
+                string sBaseColor= Enum.GetName(typeof(eBase), baseColor);
+                MessageBox.Show(typeof(BlueBase).ToString());
+                Type t = Type.GetType("Project_1.Games."+sBaseColor + "Base");
+               playerBase = (Base)Activator.CreateInstance(t);
+            }
+            
+            
+
+        }
+    }
+    
      
 
    

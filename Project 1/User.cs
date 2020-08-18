@@ -10,7 +10,7 @@ namespace Project_1
     class User
     {
         public String Username;
-        public String Password;
+        public String Password; //Dont have to save password - just used for auth 
         //Scoreboard
 
        public User(String uname,String pass)

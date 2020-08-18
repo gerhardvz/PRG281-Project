@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace Project_1
 {
@@ -55,6 +56,11 @@ namespace Project_1
                 Program.gotoMain();
             }
            
+        }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            Process.GetCurrentProcess().Kill();
         }
     }
 }

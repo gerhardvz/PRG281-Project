@@ -30,6 +30,8 @@
         {
             this.pnlGameMoves = new System.Windows.Forms.Panel();
             this.pnlUsers = new System.Windows.Forms.Panel();
+            this.btnExit = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.btnExit)).BeginInit();
             this.SuspendLayout();
             // 
             // pnlGameMoves
@@ -46,17 +48,34 @@
             this.pnlUsers.Size = new System.Drawing.Size(364, 151);
             this.pnlUsers.TabIndex = 2;
             // 
+            // btnExit
+            // 
+            this.btnExit.BackColor = System.Drawing.Color.Transparent;
+            this.btnExit.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnExit.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnExit.Image = global::Project_1.Properties.Resources.close;
+            this.btnExit.InitialImage = global::Project_1.Properties.Resources.close;
+            this.btnExit.Location = new System.Drawing.Point(1793, 12);
+            this.btnExit.Name = "btnExit";
+            this.btnExit.Size = new System.Drawing.Size(25, 25);
+            this.btnExit.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.btnExit.TabIndex = 5;
+            this.btnExit.TabStop = false;
+            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1830, 967);
             this.ControlBox = false;
+            this.Controls.Add(this.btnExit);
             this.Controls.Add(this.pnlUsers);
             this.Controls.Add(this.pnlGameMoves);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Main";
             this.Text = "Main";
+            ((System.ComponentModel.ISupportInitialize)(this.btnExit)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -64,5 +83,6 @@
         #endregion
         private System.Windows.Forms.Panel pnlGameMoves;
         private System.Windows.Forms.Panel pnlUsers;
+        private System.Windows.Forms.PictureBox btnExit;
     }
 }
