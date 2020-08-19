@@ -96,6 +96,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DB-DataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Game1.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -165,7 +166,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Images\buttons\close.png" />
+    <EmbeddedResource Include="Resources\buttons\close.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
@@ -186,6 +187,14 @@
     <Content Include="MusicQuizzer.accdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\RedPawn.bmp" />
+    <None Include="Resources\Pawns\YellowPawn.png" />
+    <None Include="Resources\Pawns\RedPawn.png" />
+    <None Include="Resources\Pawns\GreenPawn.png" />
+    <None Include="Resources\Pawns\BluePawn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Images\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

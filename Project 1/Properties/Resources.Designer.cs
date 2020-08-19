@@ -63,6 +63,16 @@ namespace Project_1.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap BluePawn {
+            get {
+                object obj = ResourceManager.GetObject("BluePawn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap close {
             get {
                 object obj = ResourceManager.GetObject("close", resourceCulture);
@@ -73,9 +83,39 @@ namespace Project_1.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap GreenPawn {
+            get {
+                object obj = ResourceManager.GetObject("GreenPawn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Map {
             get {
                 object obj = ResourceManager.GetObject("Map", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RedPawn {
+            get {
+                object obj = ResourceManager.GetObject("RedPawn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap YellowPawn {
+            get {
+                object obj = ResourceManager.GetObject("YellowPawn", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -18,7 +18,7 @@ namespace Project_1
         public Main()
         {
             Game1 game = new Game1();
-            Controls.Add(game);
+            //Controls.Add(game);
             InitializeComponent();
             
         }

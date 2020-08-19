@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExtensionMethods;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -14,26 +15,27 @@ using System.Windows.Forms;
 namespace Project_1.Game
 {
     public delegate void MovePawnHandler(int steps);
-    enum eBase { Red =1,Green=2,Yellow=3,Blue=4 };
+   public enum eBase { Red =1,Green=2,Yellow=3,Blue=4 };
     
-    class Game1:Panel
+   public class Game1:Panel
     {
 
         
-        Map gameMap;
+    public static Map gameMap;
         //List of players - max 4 because of 4 bases
        static List<Player> players = new List<Player>();
       
         //Dice
       public  Game1()
         {
-           
-
+            this.Anchor = ((System.Windows.Forms.AnchorStyles)(
+                (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom| System.Windows.Forms.AnchorStyles.Left)));
+            this.AutoSize = true;
             this.SuspendLayout();
 
             this.Location = new Point(50, 291);
             this.Name = "Game Board";
-            this.Size = new System.Drawing.Size(650, 650);
+            this.Size = new System.Drawing.Size(670, 670);
             this.TabIndex = 0;
 
 
@@ -61,22 +63,22 @@ namespace Project_1.Game
         }
 
     }
-    class Map:PictureBox
+   public class Map:PictureBox
     {
-        public Panel panel;
-        public Base bases;
-
         public Map()
         {
-            
-
             // 
             // picMap
             // 
+            
+            this.Anchor = ((AnchorStyles)(
+                (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right)));
             this.Image = Properties.Resources.Map;
-            this.Location = new Point(21, 30);
-            this.Name = "Map";
-            this.Size = new Size(602, 514);
+            this.Location = new Point(0, 0);
+            this.Name = "Map";       
+            this.Size = new Size(670, 670);
+            this.MaximumSize = new Size(1500, 1500);
+            this.MinimumSize = new Size(200, 200);
             this.SizeMode = PictureBoxSizeMode.Zoom;
             this.TabIndex = 8;
             this.TabStop = false;
@@ -117,13 +119,7 @@ namespace Project_1.Game
 
         public Base()
         {
-      //      Pawn pawn;
-     //       for (int i = 0; i < MAXPAWNS; i++)
-       //     {
-       //         pawn = new Pawn(this.BeginWaypoint[0],this.baseColor);
-       //         pawns.Add(pawn);
-        //    }
-           // MovePawn = new MovePawnHandler(pawns[0].move);
+      
         }
 
         //if pawn reaches end link move to next pawn
@@ -246,23 +242,41 @@ namespace Project_1.Game
 
     //Please note this is not a typing error it is Pawn not PORN!!! 
     //Please do not rename!!!
-    class Pawn:PictureBox {
+    class Pawn : PictureBox
+    {
         eBase color;
-        
 
-       public Pawn(Point position,eBase color)
+
+        public Pawn(Point position, eBase color)
         {
             this.steps = 0;
             this.Location = position;
             this.color = color;
+            switch (color)
+            {
+                case eBase.Red: this.Image = Properties.Resources.RedPawn;break;
+                case eBase.Green: this.Image = Properties.Resources.GreenPawn; break;
+                case eBase.Yellow: this.Image = Properties.Resources.YellowPawn; break;
+                case eBase.Blue: this.Image = Properties.Resources.BluePawn; break;
+               
+            }
+
+            this.Anchor = ((AnchorStyles)(
+               (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right)));
         }
-        int Position {
-            get { return Position; }
-            set {
-                Position = value;
-                this.Location = Map.outerRingMap[Position];
-            } }
+        int Position;
+        public void setPosition(int position)
+        {
+            Position = position;
+            this.Location = Map.outerRingMap[Position];
+        }
+
         int steps;
+        public void SetLocation(Point location, Size mapSize) 
+        { 
+            location.TransformPoint(new Size(670, 670),  mapSize);
+            Location = location; 
+        }
 
         public  void move(int step)
         {
@@ -288,7 +302,8 @@ namespace Project_1.Game
             Random random = new Random();
             for (; true;)
             {
-                eBase tempPlayerbase = (eBase)random.Next(4);
+                //Get a random value from 1 to 4 (according to eBase)
+                eBase tempPlayerbase = (eBase)random.Next(3)+1;
                 if (Game1.eBaseAvailable(tempPlayerbase))
                 {
                     baseColor = tempPlayerbase;
