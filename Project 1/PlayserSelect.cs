@@ -28,14 +28,14 @@ namespace Project_1
         private void MPSelect(object sender, EventArgs e)
         {
             Program.isMultiplayer = true;
-            MessageBox.Show("Game is Multiplayer.");
+            
             Console.WriteLine("Game is Multiplayer.");
             Program.gotoLogin();
         }
         private void SPSelect(object sender, EventArgs e)
         {
             Program.isMultiplayer = false;
-            MessageBox.Show("Game is Single Player. ");
+           
             Console.WriteLine("Game is Single Player.");
             Program.gotoLogin();
         }

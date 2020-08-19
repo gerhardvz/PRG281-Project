@@ -52,7 +52,7 @@ namespace Project_1
                 {
                     result += uuser.ToString();
                 }
-                MessageBox.Show(result);
+                
                 Program.gotoMain();
             }
            

@@ -187,7 +187,6 @@
     <Content Include="MusicQuizzer.accdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\RedPawn.bmp" />
     <None Include="Resources\Pawns\YellowPawn.png" />
     <None Include="Resources\Pawns\RedPawn.png" />
     <None Include="Resources\Pawns\GreenPawn.png" />

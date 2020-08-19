@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -10,7 +11,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-
+//READ ME!!!! READ ME!!!!
+//All Waypoint are Float values ranging from 0 to 1
+//in order to calculate position you would multiply it with the Board panel size and convert to int
 
 namespace Project_1.Game
 {
@@ -28,26 +31,51 @@ namespace Project_1.Game
         //Dice
       public  Game1()
         {
-            this.Anchor = ((System.Windows.Forms.AnchorStyles)(
-                (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom| System.Windows.Forms.AnchorStyles.Left)));
+            
+            this.Anchor = ((AnchorStyles)(
+               (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right)));
+            this.BackgroundImage= Properties.Resources.Map;
+            this.BackgroundImageLayout = ImageLayout.Zoom;
             this.AutoSize = true;
+            this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             this.SuspendLayout();
-
-            this.Location = new Point(50, 291);
-            this.Name = "Game Board";
+            this.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Location = new System.Drawing.Point(0, 0);
+            this.MaximumSize = new System.Drawing.Size(2500, 2500);
+            this.MinimumSize = new System.Drawing.Size(150, 150);
             this.Size = new System.Drawing.Size(670, 670);
-            this.TabIndex = 0;
+            this.Name = "Game Board";
 
+            this.TabIndex = 100;
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
             gameMap = new Map();
+            
+            Controls.Add(gameMap);
+
             foreach (User user in Program.users)
             {
                 Player player = new Player(user.Username);
-                players.Add(player);
+                foreach (Pawn pawn in player.playerBase.pawns)
+                {
+                    Controls.Add(pawn);
+                    this.Resize += new EventHandler(pawn.PawnReposition);
+                }
+                    players.Add(player);
             }
-            Controls.Add(gameMap);
+            gameMap.SendToBack();
+            
+            this.Resize += new EventHandler(this.ImResized);
+            
+            
+           
         }
-       
+       private void ImResized(object sender, EventArgs e)
+        {
+            
+        }
 
         public static bool eBaseAvailable(eBase playerbase)
         {
@@ -71,14 +99,14 @@ namespace Project_1.Game
             // picMap
             // 
             
-            this.Anchor = ((AnchorStyles)(
-                (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right)));
+            this.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
+                | AnchorStyles.Left)
+                | AnchorStyles.Right)));
             this.Image = Properties.Resources.Map;
             this.Location = new Point(0, 0);
             this.Name = "Map";       
             this.Size = new Size(670, 670);
-            this.MaximumSize = new Size(1500, 1500);
-            this.MinimumSize = new Size(200, 200);
+       
             this.SizeMode = PictureBoxSizeMode.Zoom;
             this.TabIndex = 8;
             this.TabStop = false;
@@ -99,7 +127,8 @@ namespace Project_1.Game
         };
     }
 
-
+    //TODO: Change Point to % value 1 to 100
+    //Easier to map on panel than to recalculate it the whole time
     abstract class Base
     {
         public  event MovePawnHandler MovePawn;
@@ -134,7 +163,7 @@ namespace Project_1.Game
             //Add values
             baseColor = eBase.Blue;
             BeginWaypoint = new Point[] {
-                new Point(0,0),
+                new Point(238,333),
                 new Point(0,0),
                 new Point(0,0),
                 new Point(0,0)
@@ -163,7 +192,7 @@ namespace Project_1.Game
             //Add values
             baseColor = eBase.Yellow;
             BeginWaypoint = new Point[] {
-                new Point(0,0),
+                new Point(334,236),
                 new Point(0,0),
                 new Point(0,0),
                 new Point(0,0)
@@ -191,8 +220,8 @@ namespace Project_1.Game
             //Add values
             baseColor = eBase.Green;
             BeginWaypoint = new Point[] {
-                new Point(0,0),
-                new Point(0,0),
+                new Point(437,333), //Begin point
+                new Point(345,345),
                 new Point(0,0),
                 new Point(0,0)
             };
@@ -200,7 +229,7 @@ namespace Project_1.Game
                 new Point(0,0),
                 new Point(0,0),
                 new Point(0,0),
-                new Point(0,0)
+                new Point(0,0) //Finish Point
             };
             Pawn pawn;
             for (int i = 0; i < MAXPAWNS; i++)
@@ -218,13 +247,13 @@ namespace Project_1.Game
             MessageBox.Show("Created a Red Base");
             //Add values
             baseColor = eBase.Red;
-            BeginWaypoint = new Point[] {
-                new Point(0,0),
+             BeginWaypoint = new Point[] {
+                new Point(334,433),
                 new Point(0,0),
                 new Point(0,0),
                 new Point(0,0)
             };
-            EndWaypoint = new Point[] {
+             EndWaypoint = new Point[] {
                 new Point(0,0),
                 new Point(0,0),
                 new Point(0,0),
@@ -245,37 +274,62 @@ namespace Project_1.Game
     class Pawn : PictureBox
     {
         eBase color;
-
+        Point point;
 
         public Pawn(Point position, eBase color)
         {
+           
             this.steps = 0;
-            this.Location = position;
+            //this.Location = position;
+            SetLocation(position, Game1.gameMap.Size);
+            point = position;
             this.color = color;
+            this.BackColor = Color.Transparent;
+            this.SizeMode = PictureBoxSizeMode.Zoom;
+            this.Size = new Size(30, 30);
+            //write Resize override to calculate new position
+            
+            
             switch (color)
             {
                 case eBase.Red: this.Image = Properties.Resources.RedPawn;break;
                 case eBase.Green: this.Image = Properties.Resources.GreenPawn; break;
                 case eBase.Yellow: this.Image = Properties.Resources.YellowPawn; break;
                 case eBase.Blue: this.Image = Properties.Resources.BluePawn; break;
-               
             }
+             this.Anchor = ((AnchorStyles)(
+               (AnchorStyles.Top |  AnchorStyles.Left )));
 
-            this.Anchor = ((AnchorStyles)(
-               (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right)));
         }
+
+        public void PawnReposition(object sender, EventArgs e)
+        {
+            Game1 parentAsPanel = sender as Game1;
+           
+            SetLocation(point, parentAsPanel.Size);
+           
+            
+
+        }
+        //current position of the pawn on the map
         int Position;
         public void setPosition(int position)
         {
             Position = position;
-            this.Location = Map.outerRingMap[Position];
-        }
+            Panel parentAsPanel = Parent as Game1;
 
+            SetLocation(Map.outerRingMap[Position], parentAsPanel.Size);
+           // this.Location = Map.outerRingMap[Position];
+        }
+        //Counting of the steps the pawn did
         int steps;
         public void SetLocation(Point location, Size mapSize) 
-        { 
-            location.TransformPoint(new Size(670, 670),  mapSize);
-            Location = location; 
+        {
+            Debug.Write("Converting Point from: "+ location.ToString() + " to: " );
+            this.Location = location.TransformPoint(new Size(670, 670),  mapSize);
+            Debug.WriteLine(Location.ToString());
+            
+            
         }
 
         public  void move(int step)
@@ -312,9 +366,9 @@ namespace Project_1.Game
             }
             {
                 string sBaseColor = Enum.GetName(typeof(eBase), baseColor);
-                MessageBox.Show(typeof(BlueBase).ToString());
+                
                
-
+                //Dynamically create a Base for the random Base chosen
                 Assembly assem = typeof(Base).Assembly;
                 playerBase = (Base)assem.CreateInstance("Project_1.Game." + sBaseColor + "Base");
                 
