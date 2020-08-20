@@ -1,4 +1,5 @@
 ﻿using ExtensionMethods;
+using Project_1.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -31,6 +33,7 @@ namespace Project_1.Game
         //Dice
       public  Game1()
         {
+            
             
             this.Anchor = ((AnchorStyles)(
                (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right)));
@@ -58,23 +61,19 @@ namespace Project_1.Game
             foreach (User user in Program.users)
             {
                 Player player = new Player(user.Username);
+                int count = 0;
                 foreach (Pawn pawn in player.playerBase.pawns)
                 {
-                    Controls.Add(pawn);
+                    pawn.Name = $"{player.username}_Pawn{count++}";
+                        Controls.Add(pawn);
                     this.Resize += new EventHandler(pawn.PawnReposition);
                 }
                     players.Add(player);
+                player.playerBase.pawns[0].move(1);
+                player.playerBase.pawns[1].move(1);
             }
             gameMap.SendToBack();
-            
-            this.Resize += new EventHandler(this.ImResized);
-            
-            
-           
-        }
-       private void ImResized(object sender, EventArgs e)
-        {
-            
+         
         }
 
         public static bool eBaseAvailable(eBase playerbase)
@@ -113,17 +112,12 @@ namespace Project_1.Game
         }
 
         //TODO: Map Values for Pawns
-        public static Point[] outerRingMap = new Point[] {
-            new Point(309, 40),
-            new Point(356, 41),
-            new Point(394, 52),
-            new Point(438, 72),
-            new Point(475, 99),
-            new Point(309, 40),
-            new Point(309, 40),
-            new Point(309, 40),
-            new Point(309, 40),
-            new Point(309, 40)
+        public static SizeF[] outerRingMap = new SizeF[] {
+            new SizeF((float)0.4611940, (float)0.0597015),
+            new SizeF((float)0.53134330, (float)0.0611940),
+            new SizeF((float)0.58805970, (float)0.0776119),
+            new SizeF((float)0.65373134, (float)0.10746268),
+            new SizeF((float)0.70895522, (float)0.14776119),
         };
     }
 
@@ -131,6 +125,7 @@ namespace Project_1.Game
     //Easier to map on panel than to recalculate it the whole time
     abstract class Base
     {
+        private int pawnsFinished = 0; 
         public  event MovePawnHandler MovePawn;
         
         public List<Pawn> pawns = new List<Pawn>();
@@ -138,20 +133,23 @@ namespace Project_1.Game
         public eBase baseColor;
 
         //Position where Base Start is located
-        public Point[] BeginWaypoint;
+        public static SizeF[] BeginWaypoint;
         //Position where Base End is located
-        public Point[] EndWaypoint ;
+        public static SizeF[] EndWaypoint ;
       
         public  void move(int step) {
             MovePawn?.Invoke(step);
         }
-
-        public Base()
+        public void PawnAtBase()
         {
-      
-        }
-
-        //if pawn reaches end link move to next pawn
+            //remove The pawn on the board and increase number of Pawns Finished
+            MovePawn -= pawns[pawnsFinished++].move;
+            //If not all pawns ar through add next pawn
+            if (pawnsFinished < MAXPAWNS)
+            {
+                MovePawn += pawns[pawnsFinished].move;
+            }
+        } 
     }
 
     //Copy for other 3 bases
@@ -159,111 +157,103 @@ namespace Project_1.Game
     {
         public BlueBase()
         {
-            MessageBox.Show("Created a Blue Base");
-            //Add values
             baseColor = eBase.Blue;
-            BeginWaypoint = new Point[] {
-                new Point(238,333),
-                new Point(0,0),
-                new Point(0,0),
-                new Point(0,0)
-            };
-            EndWaypoint = new Point[] {
-                new Point(0,0),
-                new Point(0,0),
-                new Point(0,0),
-                new Point(0,0)
+
+            BeginWaypoint = new SizeF[] {
+            new SizeF((float)0.35522388, (float)0.5),
+            new SizeF((float)0.5,(float)0.5),
+            new SizeF((float)0.5,(float)0.5),
+            new SizeF((float)0.5,(float)0.5) };
+        EndWaypoint = new SizeF[] {
+                new SizeF(0,0),
+                new SizeF(0,0),
+                new SizeF(0,0),
+                new SizeF(0,0)
             };
             Pawn pawn;
             for (int i = 0; i < MAXPAWNS; i++)
             {
-                pawn = new Pawn(this.BeginWaypoint[0], this.baseColor);
+                pawn = new Pawn(BeginWaypoint[0], this.baseColor);
+
                 pawns.Add(pawn);
             }
-         //   MovePawn = new MovePawnHandler(pawns[0].move);
-
+        
         }
     }
     class YellowBase : Base
     {
         public YellowBase()  
         {
-            MessageBox.Show("Created a Yellow Base");
             //Add values
             baseColor = eBase.Yellow;
-            BeginWaypoint = new Point[] {
-                new Point(334,236),
-                new Point(0,0),
-                new Point(0,0),
-                new Point(0,0)
+            BeginWaypoint = new SizeF[] {
+                new SizeF((float)0.5,(float)0.35223880),
+                new SizeF((float)0.5,(float)0.5),
+               new SizeF((float)0.5,(float)0.5),
+               new SizeF((float)0.5,(float)0.5)
             };
-            EndWaypoint = new Point[] {
-                new Point(0,0),
-                new Point(0,0),
-                new Point(0,0),
-                new Point(0,0)
+            EndWaypoint = new SizeF[] {
+                new SizeF(0,0),
+                new SizeF(0,0),
+                new SizeF(0,0),
+                new SizeF(0,0)
             };
             Pawn pawn;
             for (int i = 0; i < MAXPAWNS; i++)
             {
-                pawn = new Pawn(this.BeginWaypoint[0], this.baseColor);
+                pawn = new Pawn(BeginWaypoint[0], this.baseColor);
                 pawns.Add(pawn);
             }
-
         }
     }
     class GreenBase : Base
     {
         public GreenBase()
         {
-            MessageBox.Show("Created a Green Base");
             //Add values
             baseColor = eBase.Green;
-            BeginWaypoint = new Point[] {
-                new Point(437,333), //Begin point
-                new Point(345,345),
-                new Point(0,0),
-                new Point(0,0)
+            BeginWaypoint = new SizeF[] {
+                new SizeF((float)0.65223880,(float)0.5), //Begin point
+                new SizeF(345,345),
+                new SizeF((float)0.5,(float)0.5),
+                new SizeF((float)0.5,(float)0.5)
             };
-            EndWaypoint = new Point[] {
-                new Point(0,0),
-                new Point(0,0),
-                new Point(0,0),
-                new Point(0,0) //Finish Point
+            EndWaypoint = new SizeF[] {
+                new SizeF(0,0),
+                new SizeF(0,0),
+                new SizeF(0,0),
+                new SizeF(0,0) //Finish Point
             };
             Pawn pawn;
             for (int i = 0; i < MAXPAWNS; i++)
             {
-                pawn = new Pawn(this.BeginWaypoint[0], this.baseColor);
+                pawn = new Pawn(BeginWaypoint[0], this.baseColor);
                 pawns.Add(pawn);
             }
-
         }
     }
     class RedBase : Base
     {
         public RedBase() 
         {
-            MessageBox.Show("Created a Red Base");
             //Add values
             baseColor = eBase.Red;
-             BeginWaypoint = new Point[] {
-                new Point(334,433),
-                new Point(0,0),
-                new Point(0,0),
-                new Point(0,0)
+             BeginWaypoint = new SizeF[] {
+                new SizeF((float)0.5,(float)0.64626866),
+                new SizeF((float)0.5,(float)0.5),
+                new SizeF((float)0.5,(float)0.5),
+               new SizeF((float)0.5,(float)0.5)
             };
-             EndWaypoint = new Point[] {
-                new Point(0,0),
-                new Point(0,0),
-                new Point(0,0),
-                new Point(0,0)
+             EndWaypoint = new SizeF[] {
+                new SizeF(0,0),
+                new SizeF(0,0),
+                new SizeF(0,0),
+                new SizeF(0,0)
             };
-
             Pawn pawn;
             for (int i = 0; i < MAXPAWNS; i++)
             {
-                pawn = new Pawn(this.BeginWaypoint[0], this.baseColor);
+                pawn = new Pawn(BeginWaypoint[0], this.baseColor);
                 pawns.Add(pawn);
             }
         }
@@ -274,14 +264,15 @@ namespace Project_1.Game
     class Pawn : PictureBox
     {
         eBase color;
-        Point point;
-
-        public Pawn(Point position, eBase color)
+        SizeF point;
+        //Safe indicated that pawn is on the safe path on the board which is the basecolor path it starts on and ends on
+        bool safe = true;
+        public Pawn(SizeF position, eBase color)
         {
            
-            this.steps = 0;
+           
             //this.Location = position;
-            SetLocation(position, Game1.gameMap.Size);
+            SetLocation(position);
             point = position;
             this.color = color;
             this.BackColor = Color.Transparent;
@@ -304,42 +295,174 @@ namespace Project_1.Game
 
         public void PawnReposition(object sender, EventArgs e)
         {
-            Game1 parentAsPanel = sender as Game1;
-           
-            SetLocation(point, parentAsPanel.Size);
-           
-            
-
+            SetLocation(point);
         }
         //current position of the pawn on the map
-        int Position;
-        public void setPosition(int position)
-        {
-            Position = position;
-            Panel parentAsPanel = Parent as Game1;
 
-            SetLocation(Map.outerRingMap[Position], parentAsPanel.Size);
-           // this.Location = Map.outerRingMap[Position];
-        }
-        //Counting of the steps the pawn did
-        int steps;
-        public void SetLocation(Point location, Size mapSize) 
+        public void SetLocation(SizeF location) 
         {
-            Debug.Write("Converting Point from: "+ location.ToString() + " to: " );
-            this.Location = location.TransformPoint(new Size(670, 670),  mapSize);
-            Debug.WriteLine(Location.ToString());
-            
-            
-        }
-
-        public  void move(int step)
-        {
-            if (Position + step > 32)
+            //Since the Game Map Stays centered on the screen and the aspect ratio stays the same, the left 
+            //and top the offset should be calculated and added to the pawn position. 
+            //The Point would also be multiplied with th size of the screen to get the position
+           
+            Debug.Write("Converting Point from: " + location.ToString() + " to: ");
+            Size mapSize = Game1.gameMap.Size;
+            if (mapSize.Height == mapSize.Width)
             {
-                Position = Position + step - 32;
-                return;
+                // Sides are the same so dimentions are the same
+               
+                this.Location = new Point(Convert.ToInt32(location.Width * mapSize.Width), Convert.ToInt32(location.Height * mapSize.Height));
+                //this.Location = location.TransformPoint(new Size(670, 670),  mapSize);
+                
             }
-            Position = Position + step;
+            else if (mapSize.Height > mapSize.Width)
+            {
+                //Aspect ratio stays the same and is square so Width=Height
+                //Need to add offset to points in height(y-axis)
+                float offset = (mapSize.Height - mapSize.Width)/2;
+                //Calculate offset
+                this.Location = new Point(Convert.ToInt32(location.Width * mapSize.Width), Convert.ToInt32(offset +(location.Height * mapSize.Width)));
+
+            }
+            else if (mapSize.Width > mapSize.Height)
+                {
+                //Aspect ratio stays the same and is square so Width=Height
+                float offset = (mapSize.Width - mapSize.Height) / 2;
+                //Need to add offset to points in Width(x-axis)
+                this.Location = new Point(Convert.ToInt32(offset+(location.Width * mapSize.Height)), Convert.ToInt32(location.Height * mapSize.Height));
+
+            }
+            
+            Debug.WriteLine(Location.ToString());
+
+        }
+       public  bool flashing =false;
+        public void move(int step)
+        {
+            //Check if Pawn is still on Waypont begin path
+            if (safe)
+            {
+                SizeF[] BaseEnd = null;
+                SizeF[] BaseBegin = null;
+                switch (color){
+                    case eBase.Red: 
+                        {
+                             BaseEnd = RedBase.EndWaypoint;
+                             BaseBegin = RedBase.BeginWaypoint;
+                            break; }
+                    case eBase.Green: {
+                            BaseEnd = GreenBase.EndWaypoint;
+                            BaseBegin = GreenBase.BeginWaypoint; 
+                            break; }
+                    case eBase.Yellow:
+                        {
+                            BaseEnd = YellowBase.EndWaypoint;
+                            BaseBegin = YellowBase.BeginWaypoint;
+                            break;
+                        }
+                    case eBase.Blue:
+                        {
+                            BaseEnd = BlueBase.EndWaypoint;
+                            BaseBegin = BlueBase.BeginWaypoint;
+                            break;
+                        }
+                    
+                }
+                if (BaseEnd == null || BaseBegin == null)
+                {
+                    //Raise event Error
+                }
+
+                //Repeat for every step pawn has
+                for (; step > 0; step--)
+                {
+                    
+                    //Test if Pawn is in end Waypoint List
+                    if (Array.IndexOf(BaseEnd, point) != -1)
+                    {
+                        int pos = Array.IndexOf(BaseEnd, point);
+                        
+                        point = BaseEnd[++pos];
+
+                    }
+                    //Test if Pawn is in OuterRing Waypoint List
+                    else if (Array.IndexOf(Map.outerRingMap, point) != -1)
+                    {
+                        int pos = Array.IndexOf(Map.outerRingMap, point);
+
+                        point = Map.outerRingMap[++pos];
+                    }
+                    //Pawn has to be in Begin loop 
+                    else if (Array.IndexOf(BaseBegin, point) != -1)
+                    {
+                        int pos = Array.IndexOf(BaseBegin, point);
+
+                        point = BaseBegin[++pos];
+                    }
+                    else
+                    {
+                        //Raise event error Map tampering
+                        //TODO: Write EVENT
+                        continue;
+                    }
+                    
+                    
+                }
+                SetLocation(point);
+                if (PositionClash())
+                {
+                    //TODO: Create Thread Flash
+                    new Thread(FlashPawn).Start();
+                    
+                    
+                    this.Image = Resources.WhitePawn;
+                    this.BringToFront();
+                }
+                else
+                {
+                    flashing = false;
+                    switch (color)
+                    {
+                        case eBase.Red: { this.Image = Resources.RedPawn; break; }
+                        case eBase.Green: { this.Image = Resources.GreenPawn; break; }
+                        case eBase.Yellow: { this.Image = Resources.YellowPawn; break; }
+                        case eBase.Blue: { this.Image = Resources.BluePawn; break; }
+                    }
+                }
+            }
+
+            
+        }
+
+        //Just your normal color flash
+        //No nudity Here!!
+         void FlashPawn()
+        {
+            this.flashing = true;
+            while (this.flashing)
+            {
+                this.Image = Resources.WhitePawn;
+                Thread.Sleep(1000);
+                this.Image = Resources.OrangePawn;
+                Thread.Sleep(1000);
+                this.Image = Resources.PinkPawn;
+                Thread.Sleep(1000);
+            }
+        }
+
+        //This returns a bool when a Pawn is drawn and another pawn is on that position
+        private bool PositionClash()
+        {
+            foreach (Control ctrl in Parent.Controls)
+            {
+                bool isPawn = ctrl is Pawn;
+                if (this == ctrl|| !(ctrl is Pawn)) { continue; }
+                if (ctrl.Location.Equals(this.Location)){
+                    Debug.WriteLine("Object Clash between "+this.Name+" and "+ctrl.Name);
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
@@ -354,7 +477,7 @@ namespace Project_1.Game
             this.username = username;
             //setting player to random base
             Random random = new Random();
-            for (; true;)
+            while(true)
             {
                 //Get a random value from 1 to 4 (according to eBase)
                 eBase tempPlayerbase = (eBase)random.Next(3)+1;
@@ -370,6 +493,7 @@ namespace Project_1.Game
                
                 //Dynamically create a Base for the random Base chosen
                 Assembly assem = typeof(Base).Assembly;
+                
                 playerBase = (Base)assem.CreateInstance("Project_1.Game." + sBaseColor + "Base");
                 
             }

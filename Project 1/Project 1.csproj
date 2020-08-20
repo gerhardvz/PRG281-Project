@@ -88,6 +88,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomInterfaces.cs" />
     <Compile Include="DB-DataSet.cs">
       <DependentUpon>DB-DataSet.xsd</DependentUpon>
     </Compile>
@@ -187,6 +188,9 @@
     <Content Include="MusicQuizzer.accdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Pawns\OrangePawn.png" />
+    <Content Include="Resources\Pawns\PinkPawn.png" />
+    <Content Include="Resources\Pawns\WhitePawn.png" />
     <None Include="Resources\Pawns\YellowPawn.png" />
     <None Include="Resources\Pawns\RedPawn.png" />
     <None Include="Resources\Pawns\GreenPawn.png" />

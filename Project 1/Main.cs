@@ -15,7 +15,7 @@ namespace Project_1
 {
     public partial class Main : Form
     {
-        Game1 game;
+        public static Game1 game;
         Pawn pawn;
         public Main()
         {
